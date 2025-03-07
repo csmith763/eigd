@@ -3,7 +3,7 @@ import numpy as np
 import scipy
 from scipy.sparse.linalg._eigen.arpack.arpack import (
     _SymmetricArpackParams,
-    _aslinearoperator_with_dtype,
+    # _aslinearoperator_with_dtype,
     get_OPinv_matvec,
     get_inv_matvec,
     ArpackError,
@@ -351,7 +351,7 @@ def eigsh_mod(
         return eigh(A, b=M, eigvals_only=not return_eigenvectors)
 
     if sigma is None:
-        A = _aslinearoperator_with_dtype(A)
+        A = aslinearoperator(A)
         matvec = A.matvec
 
         if OPinv is not None:
@@ -369,9 +369,9 @@ def eigsh_mod(
             if Minv is None:
                 Minv_matvec = get_inv_matvec(M, hermitian=True, tol=tol)
             else:
-                Minv = _aslinearoperator_with_dtype(Minv)
+                Minv = aslinearoperator(Minv)
                 Minv_matvec = Minv.matvec
-            M_matvec = _aslinearoperator_with_dtype(M).matvec
+            M_matvec = aslinearoperator(M).matvec
     else:
         # sigma is not None: shift-invert mode
         if Minv is not None:
@@ -384,12 +384,12 @@ def eigsh_mod(
             if OPinv is None:
                 Minv_matvec = get_OPinv_matvec(A, M, sigma, hermitian=True, tol=tol)
             else:
-                OPinv = _aslinearoperator_with_dtype(OPinv)
+                OPinv = aslinearoperator(OPinv)
                 Minv_matvec = OPinv.matvec
             if M is None:
                 M_matvec = None
             else:
-                M = _aslinearoperator_with_dtype(M)
+                M = aslinearoperator(M)
                 M_matvec = M.matvec
 
         # buckling mode
@@ -398,22 +398,22 @@ def eigsh_mod(
             if OPinv is None:
                 Minv_matvec = get_OPinv_matvec(A, M, sigma, hermitian=True, tol=tol)
             else:
-                Minv_matvec = _aslinearoperator_with_dtype(OPinv).matvec
-            matvec = _aslinearoperator_with_dtype(A).matvec
+                Minv_matvec = aslinearoperator(OPinv).matvec
+            matvec = aslinearoperator(A).matvec
             M_matvec = None
 
         # cayley-transform mode
         elif mode == "cayley":
             mode = 5
-            matvec = _aslinearoperator_with_dtype(A).matvec
+            matvec = aslinearoperator(A).matvec
             if OPinv is None:
                 Minv_matvec = get_OPinv_matvec(A, M, sigma, hermitian=True, tol=tol)
             else:
-                Minv_matvec = _aslinearoperator_with_dtype(OPinv).matvec
+                Minv_matvec = aslinearoperator(OPinv).matvec
             if M is None:
                 M_matvec = None
             else:
-                M_matvec = _aslinearoperator_with_dtype(M).matvec
+                M_matvec = aslinearoperator(M).matvec
 
         # unrecognized mode
         else:
